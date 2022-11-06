@@ -11,24 +11,39 @@ class Pantry {
         const {error, isRedundant} = await this.redundantUser(data.username);
         if (await error == null) {
             if(await isRedundant == false){
-                try {
-                    const res = await axios({
-                        method: 'post',
-                        url: `${this._basket_path}/${data.username}`,
-                        data: data
-                    })
-                    return await res.data != null ? {
-                            error: null,
-                            message: "Account Created"
-                        } : {
-                            error: "Something Went Wrong",
+                const email = await this.redundantEmail(data.email);
+                if (await email.error == null) {
+                    if (!email.isRedundant) {
+                        try {
+                            const res = await axios({
+                                method: 'post',
+                                url: `${this._basket_path}/${data.username}`,
+                                data: data
+                            })
+                            return await res.data != null ? {
+                                    error: null,
+                                    message: "Account Created"
+                                } : {
+                                    error: "Something Went Wrong",
+                                    message: null
+                                }
+                        } catch (err) {
+                            return {
+                                error: err.message,
+                                message: null
+                            };
+                        }
+                    } else {
+                        return {
+                            error: "Account is Already Created With This Email",
                             message: null
                         }
-                } catch (err) {
+                    }
+                } else {
                     return {
-                        error: err.message,
+                        error: email.error,
                         message: null
-                    };
+                    }
                 }
             } else {
                 return {
@@ -107,6 +122,37 @@ class Pantry {
             return {
                 error: error.message,
                 data: null
+            }
+        }
+    }
+
+    async redundantEmail(email) {
+        const {error, data} = await this.getUsers();
+        if (await error === null) {
+            for (const i of data) {
+                let user = await this.getUser(i.name);
+                if (await user.error === null) {
+                    if (user.data.email === email) {
+                        return {
+                            error: null,
+                            isRedundant: true
+                        }
+                    }
+                } else {
+                    return {
+                        error: user.error,
+                        isRedundant: null
+                    }
+                }
+            }
+            return {
+                error: null,
+                isRedundant: false
+            }
+        } else {
+            return {
+                error: error,
+                isRedundant: null
             }
         }
     }

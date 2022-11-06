@@ -9,13 +9,11 @@ router.get('/', async (req, res) => {
 })
 
 router.post('/', async (req, res) => {
-    console.log(req.body.test);
     const {valid, error} = validator(await {
         firstname: req.body.firstname,
         lastname: req.body.lastname,
         username: req.body.username,
         email: req.body.email,
-        phone: req.body.phone,
         password: req.body.password,
         confirmPassword: req.body.confirmPassword
     });
@@ -26,7 +24,6 @@ router.post('/', async (req, res) => {
                 lastname: req.body.lastname,
                 username: req.body.username,
                 email: req.body.email,
-                phone: req.body.phone,
                 password: req.body.password,
                 confirmPassword: req.body.confirmPassword
             };
@@ -39,7 +36,6 @@ router.post('/', async (req, res) => {
             lastname: req.body.lastname,
             username: req.body.username,
             email: req.body.email,
-            phone: req.body.phone,
             password: req.body.password
         })
         if (await error == null) {
@@ -51,7 +47,9 @@ router.post('/', async (req, res) => {
 });
 
 router.get('/test', async (req, res) => {
-    res.sendFile(path.resolve(__dirname+'/../public/pages/account_created.html'));
+    console.log(await pantry.redundantEmail("w@w"))
+    res.end()
+    // res.sendFile(path.resolve(__dirname+'/../public/pages/account_created.html'));
     // console.log(__dirname+'/../public/pages/account_created.html');
     // res.end()
 });

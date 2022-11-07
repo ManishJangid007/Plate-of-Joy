@@ -71,35 +71,25 @@ class Pantry {
 
 
     async getUser(username) {
-        const {error, isRedundant} = await this.redundantUser(username);
-        if (await error == null) {
-            if (isRedundant) {
-                try {
-                    const response = await axios.get(`${this._basket_path}/${username}`)
-                    return response.data != null ? {
-                        error: null,
-                        data: response.data
-                    } : {
-                        error: "Something went wrong",
-                        data: null
-                    }
-                } catch (error) {
-                    return {
-                        error: error.message,
-                        data: null
-                    }
+        if(localData.isUserExist(username)){
+            try {
+                const response = await axios.get(`${this._basket_path}/${username}`)
+                return response.data != null ? {
+                    error: null,
+                    data: response.data
+                } : {
+                    error: "Something went wrong",
+                    data: null
                 }
-            } else {
+            } catch (error) {
                 return {
-                    error: "User not found",
+                    error: error.message,
                     data: null
                 }
             }
-        } else {
-            return {
-                error: error,
-                data: null
-            }
+        } else return {
+            error: "Couldn't find User",
+            data: null
         }
     }
 
@@ -117,37 +107,6 @@ class Pantry {
             return {
                 error: error.message,
                 data: null
-            }
-        }
-    }
-
-    async redundantEmail(email) {
-        const {error, data} = await this.getUsers();
-        if (await error === null) {
-            for (const i of data) {
-                let user = await this.getUser(i.name);
-                if (await user.error === null) {
-                    if (user.data.email === email) {
-                        return {
-                            error: null,
-                            isRedundant: true
-                        }
-                    }
-                } else {
-                    return {
-                        error: user.error,
-                        isRedundant: null
-                    }
-                }
-            }
-            return {
-                error: null,
-                isRedundant: false
-            }
-        } else {
-            return {
-                error: error,
-                isRedundant: null
             }
         }
     }

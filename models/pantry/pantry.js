@@ -1,5 +1,6 @@
 const axios = require('axios');
 const emailValidator = require('../../utils/verify-email');
+const localData = require('../local_data/driver');
 
 class Pantry {
     constructor(){
@@ -17,6 +18,8 @@ class Pantry {
                     url: `${this._basket_path}/${data.username}`,
                     data: data
                 })
+                localData.addUser(data.username)
+                localData.addEmail(data.email)
                 return await res.data != null ? {
                         error: null,
                         message: "Account Created"

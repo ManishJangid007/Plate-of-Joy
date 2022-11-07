@@ -67,7 +67,8 @@ router.get('/test', async (req, res) => {
     //     res.end()
     // })
 
-    localData.updateEmail("email")
+    // console.log(localData.getUsers());
+    localData.updateEmail("email3", "email4")
     res.end()
 });
 

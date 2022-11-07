@@ -1,4 +1,5 @@
 const axios = require('axios');
+const emailValidator = require('../../utils/verify-email');
 
 class Pantry {
     constructor(){
@@ -8,53 +9,64 @@ class Pantry {
         this._basket_path = `${this._pantry_path}/basket`;
     }
     async addUser(data) {
-        const {error, isRedundant} = await this.redundantUser(data.username);
-        if (await error == null) {
-            if(await isRedundant == false){
-                const email = await this.redundantEmail(data.email);
-                if (await email.error == null) {
-                    if (!email.isRedundant) {
-                        try {
-                            const res = await axios({
-                                method: 'post',
-                                url: `${this._basket_path}/${data.username}`,
-                                data: data
-                            })
-                            return await res.data != null ? {
-                                    error: null,
-                                    message: "Account Created"
-                                } : {
-                                    error: "Something Went Wrong",
-                                    message: null
-                                }
-                        } catch (err) {
-                            return {
-                                error: err.message,
-                                message: null
-                            };
-                        }
-                    } else {
-                        return {
-                            error: "Account is Already Created With This Email",
-                            message: null
-                        }
-                    }
-                } else {
-                    return {
-                        error: email.error,
+        const verifyEAU = await this.redundantEAU(data.username, data.email)
+        if (verifyEAU.error == null) {
+            try {
+                const res = await axios({
+                    method: 'post',
+                    url: `${this._basket_path}/${data.username}`,
+                    data: data
+                })
+                return await res.data != null ? {
+                        error: null,
+                        message: "Account Created"
+                    } : {
+                        error: ["Something Went Wrong"],
                         message: null
                     }
-                }
-            } else {
+            } catch (err) {
                 return {
-                    error: "User already exists",
+                    error: [err.message],
                     message: null
                 };
             }
         } else {
             return {
-                error: error,
+                error: verifyEAU.error,
                 message: null
+            }
+        }
+    }
+
+    async redundantEAU(username, mail) {
+        const user = await this.redundantUser(username);
+        const email = await this.redundantEmail(mail);
+        const err = [];
+
+        if (await user.error != null) err.push(user.error)
+        if (await email.error != null) err.push(email.error)
+
+        console.log(err);
+
+        if (err.length == 0) {
+            if(user.isRedundant) err.push("User Already Exists")
+            if(email.isRedundant) err.push("Account is Already Created With This Email")
+            const eValid = await emailValidator(mail)
+            if (await !eValid.validators.smtp.valid) {
+                err.push(eValid.validators.smtp.reason == undefined ? 
+                    "Enter Correct Email" : eValid.validators.smtp.reason) 
+            }
+            return err.length == 0 ? {
+                error: null,
+                isRedundant: false
+            } : {
+                error: err,
+                isRedundant: true
+            }
+        } else {
+            return {
+                error: err,
+                isRedundant: null
             }
         }
     }

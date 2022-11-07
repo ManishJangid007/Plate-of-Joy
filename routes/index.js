@@ -3,6 +3,7 @@ const path = require('path');
 const router = express.Router();
 const pantry = require('../models/pantry/pantry');
 const validator = require('../utils/form-validation');
+const localData = require('../models/local_data/driver');
 
 router.get('/', async (req, res) => {
     res.render('index');
@@ -41,17 +42,33 @@ router.post('/', async (req, res) => {
         if (await error == null) {
             res.send(message);
         } else {
-            res.render('index', await errorElements([error]));
+            res.render('index', await errorElements(error));
         }
     }
 });
 
 router.get('/test', async (req, res) => {
-    console.log(await pantry.redundantEmail("w@w"))
+    // const va = await emailValidator("w@g")
+    // console.log(await va.validators.smtp.valid);
+    // console.log(await va.validators.smtp.reason);
+    // console.log(await pantry.redundantEAU("manishj6", "w@r"));
+    // console.log(await pantry.redundantEmail("w@w"))
+
+    // fs.readFile(path.resolve(`${__dirname}/../models/local_data/emails.json`), (err, data) => {
+    //     if (err) console.log(err);
+    //     else {
+    //         const newRaw = JSON.parse(data);
+    //         newRaw.push("7")
+    //         const newData = JSON.stringify(newRaw);
+    //         fs.writeFile(path.resolve(`${__dirname}/../models/local_data/emails.json`), newData, (err) => {
+    //             if (err) console.log(err);
+    //         })
+    //     }
+    //     res.end()
+    // })
+
+    localData.updateEmail("email")
     res.end()
-    // res.sendFile(path.resolve(__dirname+'/../public/pages/account_created.html'));
-    // console.log(__dirname+'/../public/pages/account_created.html');
-    // res.end()
 });
 
 module.exports = router;

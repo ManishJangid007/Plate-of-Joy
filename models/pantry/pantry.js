@@ -42,53 +42,33 @@ class Pantry {
     }
 
     async redundantEAU(username, mail) {
-        const user = await this.redundantUser(username);
-        const email = await this.redundantEmail(mail);
         const err = [];
 
-        if (await user.error != null) err.push(user.error)
-        if (await email.error != null) err.push(email.error)
-
-        console.log(err);
+        if (localData.isUserExist(username).exist) err.push("User already exists")
+        if (localData.isEmailExist(mail).exist) err.push("email already in use")
 
         if (err.length == 0) {
-            if(user.isRedundant) err.push("User Already Exists")
-            if(email.isRedundant) err.push("Account is Already Created With This Email")
             const eValid = await emailValidator(mail)
-            if (await !eValid.validators.smtp.valid) {
-                err.push(eValid.validators.smtp.reason == undefined ? 
-                    "Enter Correct Email" : eValid.validators.smtp.reason) 
-            }
-            return err.length == 0 ? {
-                error: null,
-                isRedundant: false
-            } : {
+            if (await eValid.validators.mx.valid) {
+                if (await eValid.validators.smtp.valid) {
+                    return {
+                        error: null,
+                        isRedundant: false
+                    }
+                } else err.push("Enter valid Email Address")
+            } else err.push("Email Not Correct");
+            return {
                 error: err,
-                isRedundant: true
+                isRedundant: false
             }
         } else {
             return {
                 error: err,
-                isRedundant: null
+                isRedundant: true
             }
         }
     }
 
-    async redundantUser(username){
-        const response = await this.getUsers();
-        if  (response.error != null) return {error: response.error, isRedundant: null};
-        else {
-            const dat = response.data.find(data => data.name === username);
-            const result = dat == undefined ? {
-                error: null,
-                isRedundant: false
-            } : {
-                error: null,
-                isRedundant: true
-            }
-            return result;
-        }
-    }
 
     async getUser(username) {
         const {error, isRedundant} = await this.redundantUser(username);

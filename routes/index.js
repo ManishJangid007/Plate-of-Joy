@@ -4,6 +4,8 @@ const router = express.Router();
 const pantry = require('../models/pantry/pantry');
 const validator = require('../utils/form-validation');
 const localData = require('../models/local_data/driver');
+const emailValidator = require('../utils/verify-email');
+
 
 router.get('/', async (req, res) => {
     res.render('index');
@@ -37,7 +39,8 @@ router.post('/', async (req, res) => {
             lastname: req.body.lastname,
             username: req.body.username,
             email: req.body.email,
-            password: req.body.password
+            password: req.body.password,
+            createdOn: Date()
         })
         if (await error == null) {
             res.send(message);
@@ -68,8 +71,9 @@ router.get('/test', async (req, res) => {
     // })
 
     // console.log(localData.getUsers());
-    localData.updateEmail("email3", "email4")
-    res.end()
+    // console.log(localData.isUserExist("username").exist);
+
+    res.send(typeof(Date()))
 });
 
 module.exports = router;

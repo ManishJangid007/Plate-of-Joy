@@ -1,8 +1,18 @@
-<%- include("partials/header") %> 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>Document</title>
+</head>
+<body>
+    <%- include("partials/header") %> 
     <div>
         <h1>Create Account</h1>
 
-        <form action="/" method="POST">
+        <form action="/users/create" method="POST">
             <label for="firstname">Firstname</label>
             <input type="text" name="firstname" placeholder="Enter Firsname" <% if (locals.firstname != null) { %> value="<%= firstname %>" <% } %> ><br>
             <label for="lastname">Lastname</label>
@@ -15,7 +25,8 @@
             <input type="password" name="password" placeholder="Enter Password" <% if (locals.password != null) { %> value="<%= password %>" <% } %>><br>
             <label for="confirmPassword">Confirm Password</label>
             <input type="password" name="confirmPassword" placeholder="Confirm Password" <% if (locals.confirmPassword != null) { %> value="<%= confirmPassword %>" <% } %>><br>
-            <input type="submit">
+            <input type="submit"><br>
+            <a href="/users/login">Login</a>
         </form>
 
         <% if(locals.error != null) { %> 
@@ -26,3 +37,5 @@
         
     </div>
 <%- include("partials/footer") %>
+</body>
+</html>

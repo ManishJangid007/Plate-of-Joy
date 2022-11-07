@@ -9,6 +9,8 @@ app.use(express.static(`${__dirname}/public`));
 
 // Routes
 const indexRoute = require('./routes/index');
+const usersRoute = require('./routes/users');
 app.use('/', indexRoute);
+app.use('/users', usersRoute);
 
 app.listen(port, () => console.log('listening on port ' + port));

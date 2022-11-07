@@ -69,9 +69,8 @@ class Pantry {
         }
     }
 
-
     async getUser(username) {
-        if(localData.isUserExist(username)){
+        if(localData.isUserExist(username).exist){
             try {
                 const response = await axios.get(`${this._basket_path}/${username}`)
                 return response.data != null ? {

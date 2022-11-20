@@ -4,7 +4,6 @@ const router = express.Router();
 // const mailService = require('../utils/mail-service');
 // const random = require('../utils/random');
 
-const auth = require('../models/pantry/auth')
 
 router.get('/', async (req, res) => {
     res.redirect("/users/login");

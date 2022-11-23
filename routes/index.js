@@ -3,14 +3,8 @@ const router = express.Router();
 const dataDriver = require('../models/mongo/driver');
 
 router.get('/test', async (req, res) => {
-    const data = await dataDriver.createUser({
-        firstname: 'John',
-        lastname: 'elder',
-        username: 'JohnElder',
-        email: 'john@example.com',
-        password: 'password'
-    });
-    console.log(data);
+    const data = await dataDriver.findByUsername("JohnElder");
+    console.log(data.length);
     res.send("Go to Console to see result");
 });
 

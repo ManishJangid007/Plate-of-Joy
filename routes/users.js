@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcrypt');
 const validator = require('../utils/validator');
 const random = require('../utils/random');
 const mail_service = require('../utils/mail-service');
@@ -54,19 +55,29 @@ router.post('/verify', async (req, res) => {
         try {
             req.session.verify_email = false;
 
-            const spn_res = await spn_connect({
-                username: req.session.data.username,
-                firstname: req.session.data.firstname,
-                lastname: req.session.data.lastname,
-                email: req.session.data.email
-            })
-
-            await dataDriver.createUser({
+            const sessionData = {
                 firstname: req.session.data.firstname,
                 lastname: req.session.data.lastname,
                 username: req.session.data.username,
                 email: req.session.data.email,
-                password: req.session.data.password,
+                password: req.session.data.password
+            }
+
+            const spn_res = await spn_connect({
+                username: sessionData.username,
+                firstname: sessionData.firstname,
+                lastname: sessionData.lastname,
+                email: sessionData.email
+            })
+
+            const hashedPassword = await bcrypt.hash(sessionData.password, 10);
+
+            await dataDriver.createUser({
+                firstname: sessionData.firstname,
+                lastname: sessionData.lastname,
+                username: sessionData.username,
+                email: sessionData.email,
+                password: hashedPassword,
                 spn: {
                     username: await spn_res.data.username,
                     password: await spn_res.data.spoonacularPassword,

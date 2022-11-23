@@ -35,7 +35,7 @@ router.post('/create', async (req, res) => {
                 data: req.body
             });
         }
-        res.redirect('users/../verify');
+        res.redirect('/users/verify');
     }
 });
 
@@ -45,7 +45,7 @@ router.get('/verify', (req, res) => {
             email: req.session.data.email
         });
     } else {
-        res.redirect('users/../create');
+        res.redirect('/users/create');
     }
 });
 
@@ -80,7 +80,8 @@ router.post('/verify', async (req, res) => {
                 strings.welcomeMessageSubject(),
                 strings.welcomeMessage(fullName)
             )
-            res.redirect('users/../login')
+            req.session.destroy()
+            res.redirect('/users/login')
         } catch (e) {
             res.render('verify_email', {
                 email: req.session.data.email,

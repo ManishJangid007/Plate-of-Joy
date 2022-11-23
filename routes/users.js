@@ -132,8 +132,7 @@ router.post('/login', async (req, res) => {
 });
 
 router.post('/logout', (req, res) => {
-    req.session.isAuthenticated = false;
-    req.session._id = null;
+    req.session.destroy();
     res.redirect('/users/login');
 });
 

@@ -7,6 +7,7 @@ const mail_service = require('../utils/mail-service');
 const strings = require('../utils/strings');
 const spn_connect = require('../models/spoonacular/connect_user');
 const dataDriver = require('../models/mongo/driver')
+const auth = require('../models/mongo/auth');
 
 router.get('/', (req, res) => {
     res.redirect("/users/login");
@@ -61,14 +62,14 @@ router.post('/verify', async (req, res) => {
                 username: req.session.data.username,
                 email: req.session.data.email,
                 password: req.session.data.password
-            }
+            };
 
             const spn_res = await spn_connect({
                 username: sessionData.username,
                 firstname: sessionData.firstname,
                 lastname: sessionData.lastname,
                 email: sessionData.email
-            })
+            });
 
             const hashedPassword = await bcrypt.hash(sessionData.password, 10);
 
@@ -83,17 +84,18 @@ router.post('/verify', async (req, res) => {
                     password: await spn_res.data.spoonacularPassword,
                     hash: await spn_res.data.hash
                 }
-            })
+            });
 
-            const fullName = `${req.session.data.firstname} ${req.session.data.lastname}`
+            const fullName = `${req.session.data.firstname} ${req.session.data.lastname}`;
             mail_service.sendEmail(
                 req.session.data.email,
                 strings.welcomeMessageSubject(),
                 strings.welcomeMessage(fullName)
-            )
-            req.session.destroy()
-            res.redirect('/users/login')
+            );
+            req.session.destroy();
+            res.redirect('/users/login');
         } catch (e) {
+            console.log(e.message);
             res.render('verify_email', {
                 email: req.session.data.email,
                 error: 'Something went wrong while creating your account'
@@ -108,11 +110,31 @@ router.post('/verify', async (req, res) => {
 });
 
 router.get('/login', (req, res) => {
-    res.render('login_user');
+    if (req.session.isAuthenticated) 
+        res.redirect('/')
+    else 
+        res.render('login_user');
 });
 
 router.post('/login', async (req, res) => {
-    
+    const user = await auth(req.body.username, req.body.password);
+    if (await user) {
+        req.session._id = user._id.toString();
+        req.session.isAuthenticated = true;
+        res.redirect('/')
+    } else res.render('login_user', {
+        data: {
+            username: req.body.username,
+            password: req.body.password
+        },
+        error: true
+    });
+});
+
+router.post('/logout', (req, res) => {
+    req.session.isAuthenticated = false;
+    req.session._id = null;
+    res.redirect('/users/login');
 });
 
 module.exports = router;

@@ -4,6 +4,9 @@ const app = express();
 const port = process.env.PORT || 3000;
 const mongoose = require('mongoose');
 
+const session = require('express-session');
+const MongoDBSession = require('connect-mongodb-session')(session);
+
 app.use(express.urlencoded({ extended: true })); 
 app.set('view engine', 'ejs');
 app.use(express.static(`${__dirname}/public`));
@@ -12,6 +15,21 @@ app.use(express.static(`${__dirname}/public`));
 mongoose.connect(
     process.env.MONGO_CONNECTION_STRING,
     console.log('Connected to Mongoose')
+);
+
+// session_setup
+const store = new MongoDBSession({
+    uri: process.env.MONGO_CONNECTION_STRING,
+    collection: 'session'
+});
+
+app.use(
+    session({
+        secret: 'key to sign cookies',
+        resave: false,
+        saveUninitialized: false,
+        store: store
+    })
 );
 
 // Routes

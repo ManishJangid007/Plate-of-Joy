@@ -12,7 +12,7 @@
     <div>
         <h1>Create Account</h1>
 
-        <form action="/users/create" method="POST">
+        <form action="/users/create" method="post">
             <label for="firstname">Firstname</label>
             <input type="text" name="firstname" placeholder="Enter Firsname" <% if (locals.data != null) { %> value="<%= data.firstname %>" <% } %> ><br>
             <label for="lastname">Lastname</label>
@@ -34,8 +34,8 @@
                 <p style="color: red;"><%= i %> </p>
             <% } %>
         <% } %> 
-        
     </div>
+
 <%- include("partials/footer") %>
 </body>
 </html>

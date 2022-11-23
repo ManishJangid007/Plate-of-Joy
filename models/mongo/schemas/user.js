@@ -31,6 +31,20 @@ const userSchema = new mongoose.Schema({
     updatedOn: {
         type: Date,
         default: () => Date.now()
+    },
+    spn: {
+        username: {
+            type: String,
+            required: true
+        },
+        password: {
+            type: String,
+            required: true
+        },
+        hash: {
+            type: String,
+            required: true
+        }
     }
 });
 

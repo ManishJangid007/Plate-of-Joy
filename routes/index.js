@@ -1,9 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const dataDriver = require('../models/mongo/driver');
+const spn_connect = require('../models/spoonacular/connect_user');
 
 router.get('/test', async (req, res) => {
-    req.session.isAuth = true;
+    spn_connect({
+        username: 'test',
+        firstname: 'test',
+        lastname: 'test',
+        email: 'test@example.com'
+    })
     res.send("Go to Console to see result");
 });
 

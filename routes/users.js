@@ -109,10 +109,7 @@ router.post('/verify', async (req, res) => {
     }
 });
 
-router.get('/login', (req, res) => {
-    if (req.session.isAuthenticated) 
-        res.redirect('/')
-    else 
+router.get('/login', authenticated, (req, res) => {
         res.render('login_user');
 });
 
@@ -135,5 +132,10 @@ router.post('/logout', (req, res) => {
     req.session.destroy();
     res.redirect('/users/login');
 });
+
+function authenticated(req, res, next) {
+    if (req.session.isAuthenticated) res.redirect('/');
+    else next();
+}
 
 module.exports = router;

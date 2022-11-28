@@ -14,7 +14,7 @@
         <h1>Login Page</h1>
         <form action="/users/login" method="post">
             <label for="username">Username</label>
-            <input type="text" name="username" placeholder="Enter Username" <% if(locals.data) { %> value='<%= data.username %>' <% } %> ><br>
+            <input type="text" name="username" placeholder="Enter Username or Email" <% if(locals.data) { %> value='<%= data.username %>' <% } %> ><br>
             <label for="password">Password</label>
             <input type="password" name="password" placeholder="Enter Password" <% if(locals.data) { %> value='<%= data.password %>' <% } %> ><br>
             <input type="submit" value="Login"><br>

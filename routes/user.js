@@ -9,9 +9,21 @@ const spn_connect = require('../models/spoonacular/connect_user');
 const dataDriver = require('../models/mongo/driver')
 const auth = require('../models/mongo/auth');
 
-// router.get('/', (req, res) => {
-//     res.redirect("/users/login");
-// })
+router.get('/', async (req, res) => {
+    if (req.session.isAuthenticated) {
+        let user = await dataDriver.findById(req.session._id);
+        user = user[0]
+        res.send({
+            isAuthenticated: true,
+            fullName: `${user.firstname} ${user.lastname}`,
+            username: user.username
+        })
+    } else {
+        res.send({
+            isAuthenticated: false
+        });
+    }
+})
 
 router.post('/create', async (req, res) => {
     const errors = await validator(req.body);
@@ -112,15 +124,9 @@ router.post('/login', async (req, res) => {
     return;
 });
 
-// router.post('/logout', (req, res) => {
-//     req.session.destroy();
-//     res.redirect('/users/login');
-// });
-
-
-// function authenticated(req, res, next) {
-//     if (req.session.isAuthenticated) res.redirect('/');
-//     else next();
-// }
+router.get('/logout', (req, res) => {
+    req.session.destroy();
+    res.sendStatus(200);
+});
 
 module.exports = router;

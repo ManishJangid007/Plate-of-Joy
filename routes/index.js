@@ -8,13 +8,12 @@ const auth = require('../models/mongo/auth');
 
 router.get('/test', async (req, res) => {
     console.log("Someone hit the end point", req.path);
-    res.json([{ name: 'Mansih Haml' }]);
+    res.json([{ test: 'test' }]);
 });
 
 router.get('/', async (req, res) => {
-    res.render('home_page', {
-        isAuth: req.session.isAuthenticated
-    });
+    console.log("Someone hit the end point", req.path);
+    res.json([{ test: 'test' }]);
 })
 
 module.exports = router;

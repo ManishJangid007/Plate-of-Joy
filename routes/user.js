@@ -117,6 +117,7 @@ router.post('/login', async (req, res) => {
 //     res.redirect('/users/login');
 // });
 
+
 // function authenticated(req, res, next) {
 //     if (req.session.isAuthenticated) res.redirect('/');
 //     else next();

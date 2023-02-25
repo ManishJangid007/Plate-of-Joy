@@ -9,9 +9,9 @@ const spn_connect = require('../models/spoonacular/connect_user');
 const dataDriver = require('../models/mongo/driver')
 const auth = require('../models/mongo/auth');
 
-router.get('/', (req, res) => {
-    res.redirect("/users/login");
-})
+// router.get('/', (req, res) => {
+//     res.redirect("/users/login");
+// })
 
 router.post('/create', async (req, res) => {
     const errors = await validator(req.body);
@@ -99,27 +99,27 @@ router.post('/verify', async (req, res) => {
 
 router.post('/login', async (req, res) => {
     const user = await auth(req.body.username, req.body.password);
-    if (await user) {
+    if (user) {
         req.session._id = user._id.toString();
         req.session.isAuthenticated = true;
-        res.redirect('/')
-    } else res.render('login_user', {
-        data: {
-            username: req.body.username,
-            password: req.body.password
-        },
-        error: true
-    });
+        res.send({ err: false })
+    } else {
+        res.send({
+            err: true,
+            errs: ["*Invalid Username or Password"]
+        })
+    }
+    return;
 });
 
-router.post('/logout', (req, res) => {
-    req.session.destroy();
-    res.redirect('/users/login');
-});
+// router.post('/logout', (req, res) => {
+//     req.session.destroy();
+//     res.redirect('/users/login');
+// });
 
-function authenticated(req, res, next) {
-    if (req.session.isAuthenticated) res.redirect('/');
-    else next();
-}
+// function authenticated(req, res, next) {
+//     if (req.session.isAuthenticated) res.redirect('/');
+//     else next();
+// }
 
 module.exports = router;

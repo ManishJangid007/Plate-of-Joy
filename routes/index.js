@@ -7,9 +7,8 @@ const auth = require('../models/mongo/auth');
 
 
 router.get('/test', async (req, res) => {
-    const data = await auth('manish', '123456789');
-    console.log(data);
-    res.send("Go to Console to see result");
+    console.log("Someone hit the end point", req.path);
+    res.json([{ name: 'Mansih Haml' }]);
 });
 
 router.get('/', async (req, res) => {

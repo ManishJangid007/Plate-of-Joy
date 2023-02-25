@@ -13,17 +13,14 @@ router.get('/', (req, res) => {
     res.redirect("/users/login");
 })
 
-router.get('/create', (req, res) => {
-    res.render("create_user")
-});
-
 router.post('/create', async (req, res) => {
-    const {valid, errors} = await validator(req.body);
-    if (!valid) res.render("create_user", {
-        error: errors,
-        data: req.body
-    });
-    else {
+    const errors = await validator(req.body);
+    if (errors) {
+        res.send({
+            err: true,
+            errs: errors
+        });
+    } else {
         req.session.data = req.body;
         req.session.verify_email = true;
         const vCode = random.generateVerificationCode();
@@ -32,22 +29,15 @@ router.post('/create', async (req, res) => {
         try {
             await mail_service.sendVerificationCode(req.body.email, vCode);
         } catch (e) {
-            res.render("create_user", {
-                error: ['Something went wrong on the server'],
-                data: req.body
+            res.send({
+                err: true,
+                errs: ['*Error : Something went wrong on the server, Try again later!']
             });
+            return;
         }
-        res.redirect('/users/verify');
-    }
-});
-
-router.get('/verify', (req, res) => {
-    if (req.session.verify_email) {
-        res.render('verify_email', {
-            email: req.session.data.email
-        });
-    } else {
-        res.redirect('/users/create');
+        res.send({
+            err: false
+        })
     }
 });
 
@@ -56,35 +46,29 @@ router.post('/verify', async (req, res) => {
         try {
             req.session.verify_email = false;
 
-            const sessionData = {
+            const spn_res = await spn_connect({
+                username: req.session.data.username,
+                firstname: req.session.data.firstname,
+                lastname: req.session.data.lastname,
+                email: req.session.data.email
+            });
+
+            const hashedPassword = await bcrypt.hash(req.session.data.password, 10);
+
+            console.log(await dataDriver.createUser({
                 firstname: req.session.data.firstname,
                 lastname: req.session.data.lastname,
                 username: req.session.data.username,
                 email: req.session.data.email,
-                password: req.session.data.password
-            };
-
-            const spn_res = await spn_connect({
-                username: sessionData.username,
-                firstname: sessionData.firstname,
-                lastname: sessionData.lastname,
-                email: sessionData.email
-            });
-
-            const hashedPassword = await bcrypt.hash(sessionData.password, 10);
-
-            await dataDriver.createUser({
-                firstname: sessionData.firstname,
-                lastname: sessionData.lastname,
-                username: sessionData.username,
-                email: sessionData.email,
+                dob: req.session.data.dob,
+                gender: req.session.data.gender,
                 password: hashedPassword,
                 spn: {
                     username: await spn_res.data.username,
                     password: await spn_res.data.spoonacularPassword,
                     hash: await spn_res.data.hash
                 }
-            });
+            }))
 
             const fullName = `${req.session.data.firstname} ${req.session.data.lastname}`;
             mail_service.sendEmail(
@@ -93,24 +77,24 @@ router.post('/verify', async (req, res) => {
                 strings.welcomeMessage(fullName)
             );
             req.session.destroy();
-            res.redirect('/users/login');
+
+            res.send({
+                err: false
+            })
+
         } catch (e) {
             console.log(e.message);
-            res.render('verify_email', {
-                email: req.session.data.email,
-                error: 'Something went wrong while creating your account'
+            res.send({
+                err: true,
+                err: ["*OTP : Something went wrong on the server"]
             });
         }
     } else {
-        res.render('verify_email', {
-            email: req.session.data.email,
-            error: 'Invalid code'
+        res.send({
+            err: true,
+            errs: ["*OTP : Invalid OTP"]
         });
     }
-});
-
-router.get('/login', authenticated, (req, res) => {
-        res.render('login_user');
 });
 
 router.post('/login', async (req, res) => {

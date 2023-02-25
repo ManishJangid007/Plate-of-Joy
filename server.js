@@ -7,7 +7,8 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoDBSession = require('connect-mongodb-session')(session);
 
-app.use(express.urlencoded({ extended: true })); 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
 app.use(express.static(`${__dirname}/public`));
 
@@ -34,8 +35,8 @@ app.use(
 
 // Routes
 const indexRoute = require('./routes/index');
-const usersRoute = require('./routes/users');
-app.use('/', indexRoute);
-app.use('/users', usersRoute);
+const usersRoute = require('./routes/user');
+app.use('/api', indexRoute);
+app.use('/api/user', usersRoute);
 
 app.listen(port, console.log(`listening on port ${port}`));

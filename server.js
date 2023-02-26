@@ -34,9 +34,8 @@ app.use(
 );
 
 // Routes
-const indexRoute = require('./routes/index');
-const usersRoute = require('./routes/user');
-app.use('/api', indexRoute);
-app.use('/api/user', usersRoute);
+app.use('/api', require('./routes/index'));
+app.use('/api/user', require('./routes/user'));
+app.use('/api/spn', require('./routes/spn'));
 
 app.listen(port, console.log(`listening on port ${port}`));

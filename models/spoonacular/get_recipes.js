@@ -20,6 +20,16 @@ class Recipes {
             return false;
         }
     }
+
+    async getSimilarRecipe(id, limit) {
+        try {
+            const res = await axios.get(`${process.env.SPN_URI}/recipes/${id}/similar?number=${limit}&apiKey=${process.env.SPN_API_KEY}`)
+            return res.data;
+        } catch (err) {
+            console.log(err);
+            return false;
+        }
+    }
 }
 
 const recipesObj = new Recipes();

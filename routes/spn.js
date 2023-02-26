@@ -14,7 +14,22 @@ router.get('/recipe/:id', async (req, res) => {
     if (recipe) {
         res.send({
             success: true,
-            recipes: recipe
+            recipe: recipe
+        })
+    } else {
+        res.send({
+            success: false
+        });
+    }
+});
+
+router.get('/similar_recipes', async (req, res) => {
+    const recipes = await Recipes.getRandomRecipes(5);
+
+    if (recipes) {
+        res.send({
+            success: true,
+            recipes: [...recipes.recipes]
         })
     } else {
         res.send({
@@ -24,7 +39,6 @@ router.get('/recipe/:id', async (req, res) => {
 });
 
 router.get('/random_recipes', async (req, res) => {
-    console.log("random recipe is fetched");
     const random_recipes = await Recipes.getRandomRecipes(20);
 
     if (random_recipes) {

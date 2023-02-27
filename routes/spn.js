@@ -1,13 +1,50 @@
 const express = require('express');
 const Recipes = require('../models/spoonacular/get_recipes');
+const dataDriver = require('../models/mongo/driver');
 const router = express.Router();
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
     console.log("Someone hit endpoint", req.path);
+
+    // await dataDriver.findFavoriteRecipe('63fc580b0ec86e3a7bc3fd3f', '656544')
+
     res.send({
         test: 'spn'
     })
 });
+
+router.get('/recipe_isliked/:id', async (req, res) => {
+    const liked = await dataDriver.findFavoriteRecipe(req.session._id, req.params.id)
+    res.send({
+        liked: liked
+    });
+});
+
+router.get('/like_recipe/:id', async (req, res) => {
+    const success = await dataDriver.addFavoriteRecipe(req.session._id, req.params.id);
+    if (success) {
+        res.send({
+            success: true
+        });
+    } else {
+        res.send({
+            success: false
+        })
+    }
+})
+
+router.get('/dislike_recipe/:id', async (req, res) => {
+    const success = await dataDriver.removeFavoriteRecipe(req.session._id, req.params.id);
+    if (success) {
+        res.send({
+            success: true
+        });
+    } else {
+        res.send({
+            success: false
+        })
+    }
+})
 
 router.get('/recipe/:id', async (req, res) => {
     const recipe = await Recipes.getRecipe(req.params.id);

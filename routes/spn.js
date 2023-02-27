@@ -6,11 +6,24 @@ const router = express.Router();
 router.get('/', async (req, res) => {
     console.log("Someone hit endpoint", req.path);
 
-    // await dataDriver.findFavoriteRecipe('63fc580b0ec86e3a7bc3fd3f', '656544')
-
     res.send({
         test: 'spn'
     })
+});
+
+router.get('/favourite_recipes', async (req, res) => {
+    const data = await dataDriver.getFavoriteRecipes(req.session._id);
+    if (data) {
+        res.send({
+            success: true,
+            recipes: data
+        });
+    } else {
+        res.send({
+            success: false,
+            recipes: []
+        });
+    }
 });
 
 router.get('/recipe_isliked/:id', async (req, res) => {
@@ -20,8 +33,8 @@ router.get('/recipe_isliked/:id', async (req, res) => {
     });
 });
 
-router.get('/like_recipe/:id', async (req, res) => {
-    const success = await dataDriver.addFavoriteRecipe(req.session._id, req.params.id);
+router.post('/like_recipe', async (req, res) => {
+    const success = await dataDriver.addFavoriteRecipe(req.session._id, req.body);
     if (success) {
         res.send({
             success: true
@@ -33,8 +46,8 @@ router.get('/like_recipe/:id', async (req, res) => {
     }
 })
 
-router.get('/dislike_recipe/:id', async (req, res) => {
-    const success = await dataDriver.removeFavoriteRecipe(req.session._id, req.params.id);
+router.post('/dislike_recipe', async (req, res) => {
+    const success = await dataDriver.removeFavoriteRecipe(req.session._id, req.body.recipeId);
     if (success) {
         res.send({
             success: true

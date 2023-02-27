@@ -36,13 +36,13 @@ class Operations {
         } catch (e) { return e.message }
     }
 
-    async addFavoriteRecipe(userId, recipeId) {
+    async addFavoriteRecipe(userId, recipe) {
         try {
             await User.updateOne(
                 { _id: userId },
                 {
                     $push: {
-                        favouriteRecipes: recipeId
+                        favouriteRecipes: recipe
                     }
                 }
             );
@@ -59,7 +59,9 @@ class Operations {
                 { _id: userId },
                 {
                     $pull: {
-                        favouriteRecipes: recipeId
+                        favouriteRecipes: {
+                            recipeId: recipeId
+                        }
                     }
                 }
             );
@@ -80,10 +82,10 @@ class Operations {
         }
     }
 
-    async findFavoriteRecipe(userId, recipeId) {
+    async findFavoriteRecipe(userId, _recipeId) {
         try {
             const data = await this.getFavoriteRecipes(userId);
-            if (data.includes(recipeId)) {
+            if (data.find(ele => ele.recipeId == _recipeId)) {
                 return true;
             } else {
                 return false;

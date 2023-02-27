@@ -1,1 +1,10 @@
-GET http://localhost:3000/api/spn HTTP/1.1
+GET http://localhost:3000/api/spn/favourite_recipes HTTP/1.1
+
+# POST http://localhost:3000/api/spn/like_recipe HTTP/1.1
+
+# {
+#     "recipeId": "142355",
+#     "imgurl": "someurl",
+#     "title": "Some title",
+#     "veg": true
+# }

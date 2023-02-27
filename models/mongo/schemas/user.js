@@ -39,7 +39,8 @@ const userSchema = new mongoose.Schema({
             },
             imageUrl: String,
             title: String,
-            veg: Boolean
+            veg: Boolean,
+            time: Number
         }],
         default: []
     },

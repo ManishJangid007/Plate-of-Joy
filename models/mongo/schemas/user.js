@@ -31,6 +31,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    favouriteRecipes: {
+        type: Array,
+        default: []
+    },
     createdOn: {
         type: Date,
         immutable: true,

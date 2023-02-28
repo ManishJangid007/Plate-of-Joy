@@ -14,8 +14,6 @@ router.get('/search_recipe', async (req, res) => {
     const query = req.query.query;
     let data = [];
 
-    console.log(query);
-
     if (query) {
         data = await Recipes.searchRecipe(query, 20)
     }

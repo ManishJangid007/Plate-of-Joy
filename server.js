@@ -1,16 +1,18 @@
 if (process.env.NODE_ENV !== 'production') require('dotenv').config();
 const express = require('express');
 const app = express();
+const compression = require('compression');
 const port = process.env.PORT || 3000;
 const mongoose = require('mongoose');
 
 const session = require('express-session');
 const MongoDBSession = require('connect-mongodb-session')(session);
 
+app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
-app.use(express.static(`${__dirname}/public`));
+app.use(express.static(`${__dirname}/dist`));
 
 // db_connection
 mongoose.connect(

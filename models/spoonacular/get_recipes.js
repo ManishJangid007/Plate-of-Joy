@@ -30,6 +30,16 @@ class Recipes {
             return false;
         }
     }
+
+    async searchRecipe(query, limit) {
+        try {
+            const res = await axios.get(`${process.env.SPN_URI}/recipes/complexSearch?query=${query}&number=${limit}&apiKey=${process.env.SPN_API_KEY}`)
+            return res.data;
+        } catch (err) {
+            console.log(err);
+            return false;
+        }
+    }
 }
 
 const recipesObj = new Recipes();

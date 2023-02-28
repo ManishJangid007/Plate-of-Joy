@@ -5,10 +5,33 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
     console.log("Someone hit endpoint", req.path);
-
     res.send({
-        test: 'spn'
-    })
+        test: "test"
+    });
+});
+
+router.get('/search_recipe', async (req, res) => {
+    const query = req.query.query;
+    let data = [];
+
+    console.log(query);
+
+    if (query) {
+        data = await Recipes.searchRecipe(query, 20)
+    }
+    else data = false;
+
+    if (data) {
+        res.send({
+            success: true,
+            recipes: data.results
+        })
+    } else {
+        res.send({
+            success: false,
+            recipes: []
+        });
+    }
 });
 
 router.get('/favourite_recipes', async (req, res) => {

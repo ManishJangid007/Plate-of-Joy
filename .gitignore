@@ -1,5 +1,2 @@
 node_modules
 .env
-models/local_data/users.json
-models/local_data/emails.json
-dist

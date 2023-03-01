@@ -33,10 +33,7 @@ const userSchema = new mongoose.Schema({
     },
     favouriteRecipes: {
         type: [{
-            recipeId: {
-                type: Number,
-                unique: true
-            },
+            recipeId: Number,
             imageUrl: String,
             title: String,
             veg: Boolean,

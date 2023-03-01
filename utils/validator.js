@@ -1,5 +1,4 @@
 const dataDriver = require('../models/mongo/driver');
-const deep_email_validator = require('deep-email-validator');
 
 module.exports = async function ({
     firstname,
@@ -29,9 +28,6 @@ module.exports = async function ({
 
     const vEmail = await dataDriver.findByEmail(email);
     vEmail.length > 0 && error.push("*Email : Already have account with this email")
-
-    const devEmail = await deep_email_validator.validate(email);
-    !devEmail.validators.smtp.valid && error.push("*Email : Enter Valid Email...");
 
     !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email) && error.push("*Email : enter correct email");
 

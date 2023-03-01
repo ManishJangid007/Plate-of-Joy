@@ -91,7 +91,6 @@ class Operations {
                 return false;
             }
         } catch (e) {
-            console.log(e.message);
             return false
         }
     }

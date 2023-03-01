@@ -32,13 +32,7 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     favouriteRecipes: {
-        type: [{
-            recipeId: Number,
-            imageUrl: String,
-            title: String,
-            veg: Boolean,
-            time: Number
-        }],
+        type: Array,
         default: []
     },
     createdOn: {

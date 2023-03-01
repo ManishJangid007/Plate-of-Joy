@@ -1,4 +1,4 @@
-GET http://localhost:3000/api/spn/search_recipe?query=dumpling HTTP/1.1
+GET http://localhost:5113/WeatherForecast HTTP/1.1
 
 # POST http://localhost:3000/api/spn/like_recipe HTTP/1.1
 

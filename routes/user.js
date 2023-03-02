@@ -67,7 +67,7 @@ router.post('/verify', async (req, res) => {
 
             const hashedPassword = await bcrypt.hash(req.session.data.password, 10);
 
-            console.log(await dataDriver.createUser({
+            const result = await dataDriver.createUser({
                 firstname: req.session.data.firstname,
                 lastname: req.session.data.lastname,
                 username: req.session.data.username,
@@ -76,11 +76,13 @@ router.post('/verify', async (req, res) => {
                 gender: req.session.data.gender,
                 password: hashedPassword,
                 spn: {
-                    username: await spn_res.data.username,
-                    password: await spn_res.data.spoonacularPassword,
-                    hash: await spn_res.data.hash
+                    username: spn_res.data.username,
+                    password: spn_res.data.spoonacularPassword,
+                    hash: spn_res.data.hash
                 }
-            }))
+            })
+
+            console.log(result);
 
             const fullName = `${req.session.data.firstname} ${req.session.data.lastname}`;
             mail_service.sendEmail(

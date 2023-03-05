@@ -11,7 +11,6 @@ const MongoDBSession = require('connect-mongodb-session')(session);
 app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.set('view engine', 'ejs');
 app.use(express.static(`${__dirname}/dist`));
 
 // db_connection
